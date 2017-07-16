@@ -6,7 +6,7 @@ SERVICE ?= ssh-agent-server
 AUTHORIZATION ?= ssh-authorization.sh
 
 build:
-	go build
+	go get -a ./... && go build -o ./$(APP)
 
 install-agent:
 	cp $(APP) $(DES) && chmod 700 $(DES)$(APP) && chown root:root $(DES)$(APP)
