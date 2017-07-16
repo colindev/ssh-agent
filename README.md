@@ -30,3 +30,5 @@ $ sudo make install-authorization -e AGENT=[your agent host:port]
 
 ![profile](./profile.png)
 
+### References
+- (https://blog.heckel.xyz/2015/05/04/openssh-authorizedkeyscommand-with-fingerprint/)[openssh auth]
