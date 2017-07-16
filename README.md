@@ -1,5 +1,5 @@
 # ssh-agent
-support OpenSSH AuthorizedKeysCommand power by golang
+Support OpenSSH AuthorizedKeysCommand
 
 ### Quick Start
 
