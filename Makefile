@@ -24,7 +24,7 @@ upgrade-agent:
 uninstall-agent:
 	systemctl stop $(SERVICE)
 	systemctl disable $(SERVICE)
-	rm /etc/systemd/system/$(SERVICE).service
+	rm /etc/systemd/system/$(SERVICE).service $(DES)$(APP)
 	systemctl daemon-reload
 
 install-authorization:
