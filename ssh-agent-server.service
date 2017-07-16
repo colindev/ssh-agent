@@ -1,0 +1,13 @@
+[Unit]
+Description=ssh authorization agent (power by golang)
+
+[Service]
+Type=simple
+User=root
+Group=root
+ExecStart=/usr/local/bin/{APP} -addr {AGENT}
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
