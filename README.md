@@ -11,7 +11,7 @@ required golang compile enviroment
 ```
 $ git clone https://github.com/colindev/ssh-agent && cd ssh-agent
 $ make
-$ sudo make install-agent -e AGENT=[agent listen on]
+$ sudo make install -e AGENT=[agent listen on]
 ```
 
 then set ssh key and tag
