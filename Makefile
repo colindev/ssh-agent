@@ -11,7 +11,7 @@ build:
 build-via-docker:
 	docker run --rm -v `pwd`:/go/src/app -w /go/src/app golang:1.8 go build -o $(APP)
 
-install-agent:
+install:
 	cp $(APP) $(DES) && chmod 700 $(DES)$(APP) && chown root:root $(DES)$(APP)
 	cat ssh-agent-server.service | sed 's/{APP}/'$(APP)'/g' | sed 's/{AGENT}/'$(AGENT)'/g' > /etc/systemd/system/$(SERVICE).service
 	systemctl daemon-reload
@@ -20,11 +20,11 @@ install-agent:
 	systemctl status $(SERVICE)
 	touch /etc/$(SERVICE).conf
 
-upgrade-agent:
+upgrade:
 	systemctl stop $(SERVICE)
 	$(MAKE) install-agent -e AGENT=$(AGENT) -e SERVICE=$(SERVICE)
 
-uninstall-agent:
+uninstall:
 	systemctl stop $(SERVICE)
 	systemctl disable $(SERVICE)
 	rm /etc/systemd/system/$(SERVICE).service $(DES)$(APP)
