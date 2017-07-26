@@ -13,12 +13,12 @@ build-via-docker:
 
 install:
 	cp $(APP) $(DES) && chmod 700 $(DES)$(APP) && chown root:root $(DES)$(APP)
+	touch /etc/$(SERVICE).conf
 	cat ssh-agent-server.service | sed 's/{APP}/'$(APP)'/g' | sed 's/{AGENT}/'$(AGENT)'/g' > /etc/systemd/system/$(SERVICE).service
 	systemctl daemon-reload
 	systemctl enable $(SERVICE)
 	systemctl start $(SERVICE)
 	systemctl status $(SERVICE)
-	touch /etc/$(SERVICE).conf
 
 upgrade:
 	systemctl stop $(SERVICE)
