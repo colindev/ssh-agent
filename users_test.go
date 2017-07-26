@@ -5,6 +5,16 @@ import (
 	"testing"
 )
 
+func mapping(ss []string) map[string]struct{} {
+	ret := map[string]struct{}{}
+
+	for _, s := range ss {
+		ret[s] = struct{}{}
+	}
+
+	return ret
+}
+
 func Test_findKeys(t *testing.T) {
 
 	buf := strings.NewReader(`colin,*,aaa
@@ -19,15 +29,19 @@ nobody,*,xxx
 		t.Error(err)
 	}
 
-	var keys []string
-
-	keys = users.findKeys("colin", "abc.com")
-	if len(keys) != 1 || keys[0] != "aaa" {
+	keys := mapping(users.findKeys("colin", "abc.com"))
+	if _, finded := keys["aaa"]; !finded || len(keys) != 1 {
 		t.Error("find error", keys)
 	}
 
-	keys = users.findKeys("colin", "abc.yyy")
-	if len(keys) != 2 || keys[0] != "aaa" || keys[1] != "ccc" {
+	keys = mapping(users.findKeys("colin", "abc.yyy"))
+	if len(keys) != 2 {
+		t.Error("find error", keys)
+	}
+	if _, finded := keys["aaa"]; !finded {
+		t.Error("find error", keys)
+	}
+	if _, finded := keys["ccc"]; !finded {
 		t.Error("find error", keys)
 	}
 

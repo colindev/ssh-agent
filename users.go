@@ -35,12 +35,12 @@ func readConfig(r io.Reader) (*Users, error) {
 // Users ...
 type Users struct {
 	sync.RWMutex
-	keys map[string]map[*regexp.Regexp]string
+	keys map[string]map[string]map[string]*regexp.Regexp
 }
 
 func newUsers() *Users {
 	return &Users{
-		keys: make(map[string]map[*regexp.Regexp]string),
+		keys: make(map[string]map[string]map[string]*regexp.Regexp),
 	}
 }
 
@@ -61,15 +61,22 @@ func (u *Users) add(row []string) error {
 
 	_, exists := u.keys[user]
 	if !exists {
-		u.keys[user] = map[*regexp.Regexp]string{}
+		u.keys[user] = map[string]map[string]*regexp.Regexp{}
+	}
+	_, exists = u.keys[user][key]
+	if !exists {
+		u.keys[user][key] = map[string]*regexp.Regexp{}
 	}
 
 	for _, tag := range tags {
-		tag = strings.Replace(tag, ".", "\\.", -1)
-		tag = strings.Replace(tag, "*", ".*", -1)
-		re := regexp.MustCompile("^" + tag + "$")
 
-		u.keys[user][re] = key
+		if _, exists := u.keys[user][key][tag]; !exists {
+			tag = strings.Replace(tag, ".", "\\.", -1)
+			tag = strings.Replace(tag, "*", ".*", -1)
+			re := regexp.MustCompile("^" + tag + "$")
+
+			u.keys[user][key][tag] = re
+		}
 	}
 
 	return nil
@@ -84,9 +91,11 @@ func (u *Users) findKeys(username, hostname string) []string {
 
 	keys := u.keys[username]
 	hn := []byte(hostname)
-	for re, key := range keys {
-		if re.Match(hn) {
-			ret = append(ret, key)
+	for key, res := range keys {
+		for _, re := range res {
+			if re.Match(hn) {
+				ret = append(ret, key)
+			}
 		}
 	}
 
