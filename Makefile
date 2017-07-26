@@ -22,7 +22,7 @@ install:
 
 upgrade:
 	systemctl stop $(SERVICE)
-	$(MAKE) install-agent -e AGENT=$(AGENT) -e SERVICE=$(SERVICE)
+	$(MAKE) install -e AGENT=$(AGENT) -e SERVICE=$(SERVICE)
 
 uninstall:
 	systemctl stop $(SERVICE)
@@ -34,6 +34,7 @@ set-sshd:
 	cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
 	sed -i 's@#\?AuthorizedKeysCommand\s\+[^#]\+@AuthorizedKeysCommand '$(DES)$(AUTHORIZATION)'@' /etc/ssh/sshd_config
 	sed -i 's/#\?AuthorizedKeysCommandUser\s\+[^#]\+/AuthorizedKeysCommandUser root/' /etc/ssh/sshd_config
+	systemctl reload sshd
 
 install-authorization: set-sshd
 	cat scripts/auth.sh | sed 's/{AGENT}/'$(AGENT)'/g' > $(DES)$(AUTHORIZATION) && chmod 700 $(DES)$(AUTHORIZATION) && chown root:root $(DES)$(AUTHORIZATION)

@@ -5,14 +5,20 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"sync"
+	"syscall"
 
 	"github.com/julienschmidt/httprouter"
 )
 
-var env struct {
-	Addr       string
-	ConfigFile string
-}
+var (
+	env struct {
+		Addr       string
+		ConfigFile string
+	}
+	lc sync.Mutex
+)
 
 func init() {
 
@@ -24,15 +30,33 @@ func main() {
 
 	flag.Parse()
 
-	f, err := os.Open(env.ConfigFile)
-	if err != nil {
-		log.Fatal(err)
-	}
-	users, err := readConfig(f)
-	f.Close()
-	if err != nil {
-		log.Fatal(err)
-	}
+	var (
+		users *Users
+	)
+
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, syscall.SIGHUP)
+	go func() {
+
+		for {
+			f, err := os.Open(env.ConfigFile)
+			if err != nil {
+				log.Fatal(err)
+			}
+			u, err := readConfig(f)
+			f.Close()
+			if err != nil {
+				log.Fatal(err)
+			}
+			if users != nil {
+				users.swap(u)
+			} else {
+				users = u
+			}
+			<-c
+			log.Println("reload:", env.ConfigFile)
+		}
+	}()
 
 	router := httprouter.New()
 	router.GET("/:user/keys", func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {

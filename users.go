@@ -44,6 +44,12 @@ func newUsers() *Users {
 	}
 }
 
+func (u *Users) swap(users *Users) {
+	u.Lock()
+	defer u.Unlock()
+	u.keys = users.keys
+}
+
 func (u *Users) add(row []string) error {
 	rowLen := len(row)
 	if rowLen < 2 {
