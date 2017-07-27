@@ -18,7 +18,9 @@ then set ssh key and tag
 ```
 $ vim /etc/ssh-agent-server.conf
 ```
-user,tag1,tag2,key
+
+`user,tag1|tag2,key`
+`user,*,key2`
 
 tag is the client hostname whitch the machine hostname that you want to login via the agent, and you can use `*` to match part of name
 

@@ -19,7 +19,7 @@ func Test_findKeys(t *testing.T) {
 
 	buf := strings.NewReader(`colin,*,aaa
 # xxxxxx
-colin,yyy,bbb
+colin,yyy|zzz|xxx,bbb
 colin,*.yyy,ccc
 nobody,*,xxx
 `)

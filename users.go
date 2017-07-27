@@ -51,16 +51,15 @@ func (u *Users) swap(users *Users) {
 }
 
 func (u *Users) add(row []string) error {
-	rowLen := len(row)
-	if rowLen < 2 {
+	if len(row) != 3 {
 		return errors.New("config format must be [user,key] in one record")
 	}
 	u.Lock()
 	defer u.Unlock()
 
 	user := row[0]
-	key := row[rowLen-1]
-	tags := row[1 : rowLen-1]
+	key := row[2]
+	tags := strings.Split(row[1], "|")
 	if len(tags) == 0 {
 		tags = []string{"*"}
 	}
@@ -75,6 +74,10 @@ func (u *Users) add(row []string) error {
 	}
 
 	for _, tag := range tags {
+
+		if tag == "" || tag == "-" {
+			tag = "*"
+		}
 
 		if _, exists := u.keys[user][key][tag]; !exists {
 			tag = strings.Replace(tag, ".", "\\.", -1)
