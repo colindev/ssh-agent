@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"log"
@@ -71,9 +72,13 @@ func main() {
 		fp := r.URL.Query().Get("fingerprint")
 		keys := users.findKeys(user, fp)
 		log.Printf("search [%s] keys: %s find(%d)\n", user, fp, len(keys))
+		buf := bytes.NewBuffer(nil)
 		for _, key := range keys {
-			w.Write([]byte(key + "\n"))
+			// for debug
+			buf.WriteString(key + "\n")
 		}
+		w.Write(buf.Bytes())
+		log.Println(buf.String())
 	})
 
 	log.Println(http.ListenAndServe(env.Addr, router))
