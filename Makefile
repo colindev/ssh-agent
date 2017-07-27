@@ -1,4 +1,5 @@
 
+VERSION := `git describe --tags | cut -d '-' -f 1 `.`git rev-parse --short HEAD`
 APP := ssh-agent
 DES := /usr/local/bin/
 AGENT ?= 127.0.0.1:6666
@@ -6,10 +7,10 @@ SERVICE ?= ssh-agent-server
 AUTHORIZATION ?= ssh-authorization.sh
 
 build:
-	go get -a ./... && go build -o ./$(APP)
+	go get -a ./... && go build -ldflags "-X main.version=$(VERSION)" -o ./$(APP)
 
 build-via-docker:
-	docker run --rm -v `pwd`:/go/src/app -w /go/src/app golang:1.8 go build -o $(APP)
+	docker run --rm -v `pwd`:/go/src/app -w /go/src/app golang:1.8 go -ldflags "-X main.version=$(VERSION)" build -o $(APP)
 
 install:
 	cp $(APP) $(DES) && chmod 700 $(DES)$(APP) && chown root:root $(DES)$(APP)

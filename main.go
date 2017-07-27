@@ -2,26 +2,28 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
-	"sync"
 	"syscall"
 
 	"github.com/julienschmidt/httprouter"
 )
 
 var (
-	env struct {
+	version string
+	env     struct {
 		Addr       string
 		ConfigFile string
 	}
-	lc sync.Mutex
+	showVersion bool
 )
 
 func init() {
 
+	flag.BoolVar(&showVersion, "v", false, "display version")
 	flag.StringVar(&env.Addr, "addr", ":6666", "http listen address")
 	flag.StringVar(&env.ConfigFile, "conf", "/etc/ssh-agent-server.conf", "config file for authorized keys (use csv format)")
 }
@@ -29,6 +31,11 @@ func init() {
 func main() {
 
 	flag.Parse()
+
+	fmt.Println(version)
+	if showVersion {
+		os.Exit(0)
+	}
 
 	var (
 		users *Users
@@ -60,7 +67,11 @@ func main() {
 
 	router := httprouter.New()
 	router.GET("/:user/keys", func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-		for _, key := range users.findKeys(p.ByName("user"), r.URL.Query().Get("fingerprint")) {
+		user := p.ByName("user")
+		fp := r.URL.Query().Get("fingerprint")
+		keys := users.findKeys(user, fp)
+		log.Printf("search [%s] keys: %s find(%d)\n", user, fp, len(keys))
+		for _, key := range keys {
 			w.Write([]byte(key + "\n"))
 		}
 	})
