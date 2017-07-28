@@ -19,15 +19,24 @@ then set ssh key and tag
 $ vim /etc/ssh-agent-server.conf
 ```
 
-`user,tag1|tag2,key`
-`user,*,key2`
+```
+user-A,tag1|tag2,user-A-key
+user-A,*,user-A-key2
+team-user,*,user-A-key
+team-user,*,user-B-key
+```
 
 tag is the client hostname whitch the machine hostname that you want to login via the agent, and you can use `*` to match part of name
 
 #### agent-client
 ```
 $ git clone https://github.com/colindev/ssh-agent && cd ssh-agent
+
+// on local machines
 $ sudo make install-authorization -e AGENT=[your agent host:port]
+
+// on GCP
+$ sudo make install-authorization-gcp -e AGENT=[your agent host:port]
 ```
 
 ### Profile
