@@ -4,17 +4,20 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"github.com/julienschmidt/httprouter"
 )
 
 const (
-	LOG_DEBUG = 1 << iota
+	// LogDebug specific more detail for process
+	LogDebug = 1 << iota
 )
 
 var (
@@ -39,7 +42,7 @@ func main() {
 
 	flag.Parse()
 
-	fmt.Println(version)
+	fmt.Println("Version:", version)
 	if showVersion {
 		os.Exit(0)
 	}
@@ -73,7 +76,7 @@ func main() {
 	}()
 
 	router := httprouter.New()
-	router.GET("/:user/keys", func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	router.GET("/users/:user/keys", func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		user := p.ByName("user")
 		fp := r.URL.Query().Get("fingerprint")
 		keys := users.findKeys(user, fp)
@@ -84,10 +87,23 @@ func main() {
 			buf.WriteString(key + "\n")
 		}
 		w.Write(buf.Bytes())
-		if logLevel&LOG_DEBUG > 0 {
+		if logLevel&LogDebug > 0 {
 			log.Println(buf.String())
 		}
 	})
+
+	router.HandlerFunc(http.MethodGet, "/scripts/installer.sh", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		b, err := ioutil.ReadFile("./scripts/installer.sh")
+		if err != nil {
+			http.NotFound(w, r)
+			return
+		}
+
+		selfLink := r.Host
+
+		resBody := strings.Replace(string(b), "{{selfLink}}", selfLink, -1)
+		w.Write([]byte(resBody))
+	}))
 
 	log.Println(http.ListenAndServe(env.Addr, router))
 }

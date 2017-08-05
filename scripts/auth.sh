@@ -1,3 +1,3 @@
 #!/bin/env bash
 
-curl http://{AGENT}/${1}/keys?fingerprint=`hostname`
+curl http://{AGENT}/users/${1}/keys?fingerprint=`hostname`
