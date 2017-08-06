@@ -20,8 +20,15 @@ sed -i "s@#\?AuthorizedKeysCommand\s\+[^#]\+@AuthorizedKeysCommand ${AUTH_SCRIPT
 sed -i 's/#\?AuthorizedKeysCommandUser\s\+[^#]\+/AuthorizedKeysCommandUser root/' /etc/ssh/sshd_config
 systemctl reload sshd
 
+if [ -f /etc/selinux/config ]
+then
+    sed -i 's/SELINUX=enforcing/SELINUX=permissive/' /etc/selinux/config
+    setenforce 0
+fi
+
 for user in `curl http://{{selfLink}}/users?project=$project 2>/dev/null`
 do
-adduser $user
+    echo add user [$user]
+    adduser $user
 done
 
