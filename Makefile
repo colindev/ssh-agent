@@ -6,7 +6,7 @@ AGENT ?= 127.0.0.1:6666
 SERVICE ?= ssh-agent-server
 AUTHORIZATION ?= ssh-authorization.sh
 
-bin:
+gobin:
 	go get -a ./... && go build -ldflags "-X main.version=$(VERSION)" -o ./$(APP)
 
 build-via-docker:

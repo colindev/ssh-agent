@@ -12,16 +12,18 @@ import (
 
 func readConfig(r io.Reader) (*Users, error) {
 
+	var line int
 	users := newUsers()
 
 	conf := csv.NewReader(r)
 	conf.Comment = '#'
 	for {
+		line++
 		row, err := conf.Read()
 		if err == io.EOF {
 			break
 		} else if err != nil {
-			log.Fatal(err)
+			log.Fatal("line=", line, err)
 		}
 
 		if err := users.add(row); err != nil {
@@ -89,6 +91,27 @@ func (u *Users) add(row []string) error {
 	}
 
 	return nil
+}
+
+// only for GCP
+func (u *Users) findUsers(project string) []string {
+
+	ret := []string{}
+
+	u.RLock()
+	defer u.RUnlock()
+
+	for user, mps := range u.keys {
+		for _, fps := range mps {
+			for fp := range fps {
+				if strings.HasSuffix(fp, "."+project) {
+					ret = append(ret, user)
+				}
+			}
+		}
+	}
+
+	return ret
 }
 
 func (u *Users) findKeys(username, hostname string) []string {

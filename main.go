@@ -92,6 +92,12 @@ func main() {
 		}
 	})
 
+	router.HandlerFunc(http.MethodGet, "/users", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		for _, user := range users.findUsers(r.URL.Query().Get("project")) {
+			w.Write([]byte(user + "\n"))
+		}
+	}))
+
 	router.HandlerFunc(http.MethodGet, "/scripts/installer.sh", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		b, err := ioutil.ReadFile("./scripts/installer.sh")
 		if err != nil {
@@ -100,8 +106,8 @@ func main() {
 		}
 
 		selfLink := r.Host
-
 		resBody := strings.Replace(string(b), "{{selfLink}}", selfLink, -1)
+
 		w.Write([]byte(resBody))
 	}))
 
