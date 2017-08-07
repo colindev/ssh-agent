@@ -2,7 +2,7 @@
 VERSION := `git describe --tags | cut -d '-' -f 1 `.`git rev-parse --short HEAD`
 APP := ssh-agent
 DES := /usr/local/bin/
-AGENT ?= 127.0.0.1:6666
+AGENT ?= :6666
 SERVICE ?= ssh-agent-server
 AUTHORIZATION ?= ssh-authorization.sh
 
