@@ -29,7 +29,7 @@ upgrade:
 uninstall:
 	systemctl stop $(SERVICE)
 	systemctl disable $(SERVICE)
-	rm /etc/systemd/system/$(SERVICE).service $(DES)$(APP)
+	rm -r /etc/systemd/system/$(SERVICE).service $(DES)$(APP) /etc/$(SERVICE)/
 	systemctl daemon-reload
 
 set-sshd:
