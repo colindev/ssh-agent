@@ -29,6 +29,11 @@ fi
 for user in `curl http://{{selfLink}}/users?project=$project 2>/dev/null`
 do
     echo add user [$user]
-    adduser $user
+    if uname -a | grep debian
+    then
+        adduser --disabled-password --gecos '' %s
+    else
+        adduser %s
+    fi
 done
 
