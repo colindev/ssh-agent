@@ -10,7 +10,7 @@ gobin:
 	go get -a ./... && go build -ldflags "-X main.version=$(VERSION)" -o ./$(APP)
 
 build-via-docker:
-	docker run --rm -v `pwd`:/go/src/app -w /go/src/app golang:1.8 go build -ldflags "-X main.version=$(VERSION)" -o $(APP)
+	docker run --rm -v `pwd`:/go/src/app -w /go/src/app golang:1.8 make gobin
 
 install:
 	cp $(APP) $(DES) && chmod 700 $(DES)$(APP) && chown root:root $(DES)$(APP)
