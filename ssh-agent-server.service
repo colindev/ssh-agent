@@ -6,7 +6,7 @@ After=network.target
 Type=simple
 User=root
 Group=root
-ExecStart=/usr/local/bin/{APP} -addr {AGENT}
+ExecStart=/usr/local/bin/{APP} -addr {AGENT} -conf /etc/{SERVICE}/config
 ExecStop=/bin/kill -s QUIT $MAINPID
 ExecReload=/bin/kill -s HUP $MAINPID
 

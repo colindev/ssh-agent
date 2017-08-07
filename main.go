@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path"
 	"strings"
 	"syscall"
 
@@ -35,7 +36,7 @@ func init() {
 	flag.IntVar(&logLevel, "log", 0, "log level (0-1)")
 	flag.BoolVar(&showVersion, "v", false, "display version")
 	flag.StringVar(&env.Addr, "addr", ":6666", "http listen address")
-	flag.StringVar(&env.ConfigFile, "conf", "/etc/ssh-agent-server.conf", "config file for authorized keys (use csv format)")
+	flag.StringVar(&env.ConfigFile, "conf", "/etc/ssh-agent-server/config", "config file for authorized keys (use csv format)")
 }
 
 func main() {
@@ -75,6 +76,9 @@ func main() {
 		}
 	}()
 
+	scriptsDir := path.Dir(env.ConfigFile)
+	log.Printf("scripts dir [%s]\n", scriptsDir)
+
 	router := httprouter.New()
 	router.GET("/users/:user/keys", func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		user := p.ByName("user")
@@ -99,7 +103,7 @@ func main() {
 	}))
 
 	router.HandlerFunc(http.MethodGet, "/scripts/installer.sh", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		b, err := ioutil.ReadFile("./scripts/installer.sh")
+		b, err := ioutil.ReadFile(scriptsDir + "/installer.sh")
 		if err != nil {
 			http.NotFound(w, r)
 			return
