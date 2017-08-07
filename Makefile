@@ -15,7 +15,7 @@ build-via-docker:
 install:
 	cp $(APP) $(DES) && chmod 700 $(DES)$(APP) && chown root:root $(DES)$(APP)
 	mkdir -p /etc/$(SERVICE)
-	if [ ! -f /etc/$(SERVICE)/config ];\
+	if [ ! -f /etc/$(SERVICE)/config ]; then\
 		touch /etc/$(SERVICE)/config;\
 	fi
 	rsync -a ./scripts /etc/$(SERVICE)/
