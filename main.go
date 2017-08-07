@@ -76,8 +76,8 @@ func main() {
 		}
 	}()
 
-	scriptsDir := path.Dir(env.ConfigFile)
-	log.Printf("scripts dir [%s]\n", scriptsDir)
+	configDir := path.Dir(env.ConfigFile)
+	log.Printf("config dir [%s]\n", configDir)
 
 	router := httprouter.New()
 	router.GET("/users/:user/keys", func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -103,7 +103,7 @@ func main() {
 	}))
 
 	router.HandlerFunc(http.MethodGet, "/scripts/installer.sh", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		b, err := ioutil.ReadFile(scriptsDir + "/scripts/installer.sh")
+		b, err := ioutil.ReadFile(configDir + "/scripts/installer.sh")
 		if err != nil {
 			log.Println("read script error:", err)
 			http.NotFound(w, r)
