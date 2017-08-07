@@ -105,6 +105,7 @@ func main() {
 	router.HandlerFunc(http.MethodGet, "/scripts/installer.sh", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		b, err := ioutil.ReadFile(scriptsDir + "/installer.sh")
 		if err != nil {
+			log.Println("read script error:", err)
 			http.NotFound(w, r)
 			return
 		}
