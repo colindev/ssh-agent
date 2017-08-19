@@ -10,6 +10,13 @@ required golang compile enviroment
 #### agent-server
 ```
 $ git clone https://github.com/colindev/ssh-agent && cd ssh-agent
+curl -LO https://storage.googleapis.com/ssh-agent/release/$(curl -s https://storage.googleapis.com/ssh-agent/stable.txt)/linux/amd64/ssh-agent
+$ sudo make install -e AGENT=[agent listen on]
+```
+
+#### agent-server - golang environment
+```
+$ git clone https://github.com/colindev/ssh-agent && cd ssh-agent
 $ make
 $ sudo make install -e AGENT=[agent listen on]
 ```

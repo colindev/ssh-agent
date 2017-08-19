@@ -12,6 +12,13 @@ gobin:
 build-via-docker:
 	docker run --rm -v `pwd`:/go/src/app -w /go/src/app golang:1.8 make gobin
 
+release: gobin
+	gsutil cp ssh-agent gs://ssh-agent/release/$(VERSION)/linux/amd64/
+
+tag-stable: release
+	echo $(VERSION) > stable.txt;
+	gsutil cp stable.txt gs://ssh-agent/
+
 install:
 	cp $(APP) $(DES) && chmod 700 $(DES)$(APP) && chown root:root $(DES)$(APP)
 	mkdir -p /etc/$(SERVICE)
